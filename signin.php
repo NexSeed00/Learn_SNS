@@ -7,6 +7,7 @@
       // ①
       $email = $_POST['input_email'];
       $password = $_POST['input_password'];
+      // var_dump($email);
       if ($email != '' && $password != '') {
           // データベースとの照合処理
         $sql = 'SELECT * FROM `users` WHERE `email`=?';
@@ -14,14 +15,16 @@
         $stmt = $dbh->prepare($sql);
         $stmt->execute($data);
         $record = $stmt->fetch(PDO::FETCH_ASSOC);
+        var_dump($record['id']);
         // var_dump($record);
         // メールアドレスでの本人確認
         if ($record == false) {
           $errors['signin'] = 'failed';
         } else{
-          // $_SESSION['LearnSNS']['id'] = $record['id'];
-          header("Location: timeline.php");
-          exit();
+          $_SESSION['LearnSNS']['email'] = $record['email'];
+          var_dump($_SESSION['LearnSNS']['email']);
+          // header("Location: timeline.php");
+          // exit();
         }
       } else {
         $errors['signin'] = 'blank';
@@ -65,10 +68,10 @@
       <div class="row">
           <div class="col-xs-8 col-xs-offset-2 thumbnail">
               <h2 class="text-center content_header">サインイン</h2>
-              <form method="POST" action="signin.php">
+              <form method="POST" action="timeline.php">
                   <div class="form-group">
                     <label for="email">メールアドレス</label>
-                    <input type="email" name="input_email" class="form-control" id="email" placeholder="example@gmail.com">
+                    <input type="email" name="input_email" class="form-control" id="email" placeholder="example@gmail.com" value="<?php echo $_SESSION['LearnSNS']['email'];?>">
                     <?php if(isset($errors['signin']) && $errors['signin'] == 'blank'): ?>
                       <p class="text-danger">メールアドレスとパスワードを正しく入力してください</p>
                     <?php endif; ?>
