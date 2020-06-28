@@ -1,6 +1,7 @@
 <?php
     require('dbconnect.php');
     // 初期化
+    
     $errors = [];
     if (!empty($_POST)) {
       // ①
@@ -13,14 +14,39 @@
         $stmt = $dbh->prepare($sql);
         $stmt->execute($data);
         $record = $stmt->fetch(PDO::FETCH_ASSOC);
+        // var_dump($record);
         // メールアドレスでの本人確認
         if ($record == false) {
-            $errors['signin'] = 'failed';
+          $errors['signin'] = 'failed';
+        } else{
+          // $_SESSION['LearnSNS']['id'] = $record['id'];
+          header("Location: timeline.php");
+          exit();
         }
-
       } else {
-          $errors['signin'] = 'blank';
+        $errors['signin'] = 'blank';
       }
+
+
+       
+      //   if (password_verify($password,$record['password'])){
+      //     //認証成功
+      //     session_start();
+      //     //※追加部分 
+      //     //SESSION変数にIDを保存
+      //     $_SESSION['LearnSNS']['id'] = $record['id'];
+    
+      //     //timeline.phpに移動
+      //     header("Location: timeline.php");
+      //     exit();
+    
+      //   }else{
+      //     $errors['signin'] = 'failed';
+      //   }
+
+      // } else {
+      //     $errors['signin'] = 'blank';
+      // }
     }
 
 ?>
