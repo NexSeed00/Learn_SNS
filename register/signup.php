@@ -1,5 +1,14 @@
 <?php
     session_start();
+    if (isset($_GET['action']) && $_GET['action'] == 'rewrite') {
+      $_POST['input_name'] = $_SESSION['LearnSNS']['name'];
+      $_POST['input_email'] = $_SESSION['LearnSNS']['email'];
+      $_POST['input_password'] = $_SESSION['LearnSNS']['password'];
+      $errors['rewrite'] = true;
+    }
+    $name = '';
+    $email = '';
+
     $errors = [];
     if (!empty($_POST)) {
         $name = $_POST['input_name'];
@@ -22,7 +31,11 @@
         }
 
         // 画像名を取得
-        $file_name = $_FILES['input_img_name']['name'];
+        $file_name = ''; // ①
+        if (!isset($_GET['action'])) { // ②
+          $file_name = $_FILES['input_img_name']['name'];
+        }
+  
         if (!empty($file_name)) {
             // 拡張子チェックの処理
             $file_type = substr($file_name, -3); // 画像名の後ろから3文字を取得
@@ -45,8 +58,8 @@
       $_SESSION['LearnSNS']['img_name'] = $submit_file_name;
       header('Location: check.php');
       exit();
-
     }
+    
 
 ?>
 
@@ -68,7 +81,7 @@
                     <div class="form-group">
                         <label for="name">ユーザー名</label>
                         <input type="text" name="input_name" class="form-control" id="name" placeholder="山田 太郎"
-                            value="">
+                            value="<?php echo htmlspecialchars($name); ?>">
                             <?php if(isset($errors['name']) && $errors['name'] == 'blank') : ?>
                             <p class="text-danger">ユーザー名を入力してください</p>
                             <?php endif; ?>
@@ -76,7 +89,7 @@
                     <div class="form-group">
                         <label for="email">メールアドレス</label>
                         <input type="email" name="input_email" class="form-control" id="email" placeholder="example@gmail.com"
-                            value="">
+                            value="<?php echo htmlspecialchars($email); ?>">
                             <?php if(isset($errors['email']) && $errors['email'] == 'blank') : ?>
                             <p class="text-danger">メールアドレスを入力してください</p>
                             <?php endif; ?>
@@ -90,6 +103,11 @@
                         <?php if(isset($errors['password']) && $errors['password'] == 'length') : ?>
               　　　　　　　　<p class="text-danger">パスワードは4 ~ 16文字で入力してください</p>
             　　　　　　　<?php endif; ?>
+                      <!-- もし$errorsが空じゃなければエラーメッセージを出力する -->
+                        <?php if(!empty($errors)) { ?>
+                          <p class="text-danger">パスワードを再度入力して下さい</p>
+                        <?php } ?>
+
                     </div>
                     <div class="form-group">
                         <label for="img_name">プロフィール画像</label>
