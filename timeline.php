@@ -1,5 +1,9 @@
 <?php
-    
+
+session_start();
+
+var_dump($_SESSION);
+echo 'とんだよ';
 ?>
 
 
@@ -16,10 +20,14 @@
             </div>
             <div class="col-xs-9">
                 <div class="feed_form thumbnail">
-                    <form method="POST" action="">
+                    <form method="POST" action="timeline.php">
                         <div class="form-group">
                             <textarea name="feed" class="form-control" rows="3" placeholder="Happy Hacking!" style="font-size: 24px;"></textarea><br>
-                        </div>
+                            <?php if (isset($errors['feed']) && $errors['feed'] == 'blank') { ?>
+                            <p class="text-danger">投稿データを入力してください</p>
+                            <?php } ?>
+
+                          </div>
                         <input type="submit" value="投稿する" class="btn btn-primary">
                     </form>
                 </div>
