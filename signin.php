@@ -1,7 +1,7 @@
 <?php
     require('dbconnect.php');
     // 初期化
-    
+    session_start();
     $errors = [];
     if (!empty($_POST)) {
       // ①
@@ -15,41 +15,28 @@
         $stmt = $dbh->prepare($sql);
         $stmt->execute($data);
         $record = $stmt->fetch(PDO::FETCH_ASSOC);
-        var_dump($record['id']);
+        // var_dump($record['id']);
         // var_dump($record);
         // メールアドレスでの本人確認
         if ($record == false) {
           $errors['signin'] = 'failed';
-        } else{
-          $_SESSION['LearnSNS']['email'] = $record['email'];
-          var_dump($_SESSION['LearnSNS']['email']);
-          // header("Location: timeline.php");
-          // exit();
-        }
+        } 
       } else {
         $errors['signin'] = 'blank';
       }
-
-
-       
-      //   if (password_verify($password,$record['password'])){
-      //     //認証成功
-      //     session_start();
-      //     //※追加部分 
-      //     //SESSION変数にIDを保存
-      //     $_SESSION['LearnSNS']['id'] = $record['id'];
-    
-      //     //timeline.phpに移動
-      //     header("Location: timeline.php");
-      //     exit();
-    
-      //   }else{
-      //     $errors['signin'] = 'failed';
-      //   }
-
-      // } else {
-      //     $errors['signin'] = 'blank';
-      // }
+      if (password_verify($password,$record['password'])){
+        //認証成功
+        //※追加部分 
+        //SESSION変数にIDを保存
+        $_SESSION['LearnSNS']['id'] = $record['id'];
+  
+        //timeline.phpに移動
+        header("Location: timeline.php");
+        exit();
+  
+      }else{
+        $errors['signin'] = 'failed';
+      }
     }
 
 ?>
@@ -68,10 +55,10 @@
       <div class="row">
           <div class="col-xs-8 col-xs-offset-2 thumbnail">
               <h2 class="text-center content_header">サインイン</h2>
-              <form method="POST" action="timeline.php">
+              <form method="POST" action="signin.php">
                   <div class="form-group">
                     <label for="email">メールアドレス</label>
-                    <input type="email" name="input_email" class="form-control" id="email" placeholder="example@gmail.com" value="<?php echo $_SESSION['LearnSNS']['email'];?>">
+                    <input type="email" name="input_email" class="form-control" id="email" placeholder="example@gmail.com">
                     <?php if(isset($errors['signin']) && $errors['signin'] == 'blank'): ?>
                       <p class="text-danger">メールアドレスとパスワードを正しく入力してください</p>
                     <?php endif; ?>

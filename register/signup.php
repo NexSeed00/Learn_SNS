@@ -46,19 +46,20 @@
         } else {
             $errors['img_name'] = 'blank';
         }
+        if (empty($errors)) {
+            $date_str = date('YmdHis');
+            $submit_file_name = $date_str . $file_name;
+            move_uploaded_file($_FILES['input_img_name']['tmp_name'], '../user_profile_img/' . $submit_file_name);
+            $_SESSION['LearnSNS']['name'] = $_POST['input_name'];
+            $_SESSION['LearnSNS']['email'] = $_POST['input_email'];
+            $_SESSION['LearnSNS']['password'] = $_POST['input_password'];
+            // 上記3つは$_SESSION['register'] = $_POST;という書き方で1文にまとめることもできます
+            $_SESSION['LearnSNS']['img_name'] = $submit_file_name;
+            header('Location: check.php');
+            exit();
+          }
     }
-    if (empty($errors)) {
-      $date_str = date('YmdHis');
-      $submit_file_name = $date_str . $file_name;
-      move_uploaded_file($_FILES['input_img_name']['tmp_name'], '../user_profile_img/' . $submit_file_name);
-      $_SESSION['LearnSNS']['name'] = $_POST['input_name'];
-      $_SESSION['LearnSNS']['email'] = $_POST['input_email'];
-      $_SESSION['LearnSNS']['password'] = $_POST['input_password'];
-      // 上記3つは$_SESSION['register'] = $_POST;という書き方で1文にまとめることもできます
-      $_SESSION['LearnSNS']['img_name'] = $submit_file_name;
-      header('Location: check.php');
-      exit();
-    }
+    
     
 
 ?>
